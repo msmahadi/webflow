@@ -1,1 +1,1 @@
-alert("test-1 update.js");
+console.log("hello test-1.js");
