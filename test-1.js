@@ -1,2 +1,2 @@
-alert("hey";
+alert("hey");
 console.log("updated test-1.js");
