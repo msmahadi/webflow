@@ -1,9 +1,8 @@
-
 import fs from "fs";
 import path from "path";
 
 export default function handler(req, res) {
-  const filePath = path.resolve("./test-1.js"); // মূল ফাইলের লোকেশন
+  const filePath = path.resolve("./test-1.js"); // your main file
 
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
@@ -12,6 +11,6 @@ export default function handler(req, res) {
     }
 
     res.setHeader("Content-Type", "application/javascript");
-    res.status(200).send(data);
+    res.status(200).send(data); // send the JS file
   });
 }
