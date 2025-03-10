@@ -1,5 +1,19 @@
 {
-  "public": {
-    "ignore": ["test-1.js"]
-  }
+  "rewrites": [
+    {
+      "source": "/api/secure-test-1",
+      "destination": "/api/secure-test-1.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/secure-test-1.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    }
+  ]
 }
