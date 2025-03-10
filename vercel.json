@@ -1,1 +1,5 @@
-
+{
+  "public": {
+    "ignore": ["test-1.js"]
+  }
+}
