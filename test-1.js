@@ -1,1 +1,2 @@
-console.log("hello code test-1.js");
+alert("hey";
+console.log("updated test-1.js");
