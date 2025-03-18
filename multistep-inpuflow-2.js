@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const steps = document.querySelectorAll('.step');
   const nextButtons = document.querySelectorAll("[data-step='next-button']");
   const backButton = document.querySelector('#back-button');
-  const submitButtons = document.querySelectorAll('.submit-button');
   const form = document.getElementById('multiStepForm');
   const errorMessageDiv = document.getElementById('error-message');
   let currentStepIndex = 0;
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // প্রথম স্টেপ দেখানো
   showStep(currentStepIndex);
 
-  // Enter key দিয়ে সাবমিশন রোধ (final step ছাড়া)
+  // non-final স্টেপে Enter key চাপলে সাবমিশন রোধ করা
   form.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       const currentStep = steps[currentStepIndex];
@@ -54,7 +53,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       if (!allFilled) {
         errorMessageDiv.innerText = 'অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন!';
-        setTimeout(() => (errorMessageDiv.innerText = ''), 3000);
+        setTimeout(() => {
+          errorMessageDiv.innerText = '';
+        }, 3000);
         return;
       }
 
@@ -89,16 +90,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Submit Button Event (for all final steps)
-  submitButtons.forEach((button) => {
-    button.addEventListener('click', function (e) {
+  // Form submit event listener (final step submission)
+  form.addEventListener('submit', function (e) {
+    const currentStep = steps[currentStepIndex];
+    // শুধুমাত্র final step (data-final attribute যুক্ত) এ সাবমিশন অনুমোদিত
+    if (!currentStep.hasAttribute('data-final')) {
       e.preventDefault();
-      errorMessageDiv.innerText = 'Form submitted successfully!';
-      setTimeout(() => (errorMessageDiv.innerText = ''), 3000);
-      form.reset();
-      currentStepIndex = 0;
-      historyStack.length = 0;
-      showStep(currentStepIndex);
-    });
+      return;
+    }
+    e.preventDefault(); // default submission রোধ করা (Webflow এ যদি AJAX বা অন্যভাবে সাবমিট করতে চাও, সেটি এখানে যুক্ত করো)
+    errorMessageDiv.innerText = 'Form submitted successfully!';
+    setTimeout(() => {
+      errorMessageDiv.innerText = '';
+    }, 3000);
+    form.reset();
+    currentStepIndex = 0;
+    historyStack.length = 0;
+    showStep(currentStepIndex);
   });
 });
