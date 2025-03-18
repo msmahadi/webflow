@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Submit Button Event (for all final steps)
   submitButtons.forEach((button) => {
-    button.addEventListener('submit', function (e) {
+    button.addEventListener('click', function (e) {
       // e.preventDefault();
       errorMessageDiv.innerText = 'Form submitted successfully!';
       setTimeout(() => (errorMessageDiv.innerText = ''), 3000);
