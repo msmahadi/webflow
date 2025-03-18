@@ -1,4 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // Only modify radio button functionality: 
+  // When a radio button is selected, add the "is-active-radio" class to its parent label
+  const radioButtons = document.querySelectorAll('input[type="radio"]');
+  radioButtons.forEach((radio) => {
+    radio.addEventListener('change', function () {
+      const name = radio.getAttribute('name');
+      const group = document.querySelectorAll(`input[name="${name}"]`);
+      group.forEach((item) => {
+        if (
+          item.parentElement &&
+          item.parentElement.classList.contains('if_fom-radio-btn')
+        ) {
+          item.parentElement.classList.remove('is-active-radio');
+        }
+      });
+      if (
+        radio.checked &&
+        radio.parentElement &&
+        radio.parentElement.classList.contains('if_fom-radio-btn')
+      ) {
+        radio.parentElement.classList.add('is-active-radio');
+      }
+    });
+  });
+
+  // The rest of your code (DO NOT DELETE OR CHANGE ANYTHING ELSE)
   const steps = document.querySelectorAll('.step');
   const nextButtons = document.querySelectorAll("[data-step='next-button']");
   const backButton = document.querySelector('#back-button');
