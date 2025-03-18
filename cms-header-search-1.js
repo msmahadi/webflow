@@ -2,29 +2,28 @@ document.addEventListener('DOMContentLoaded', function() {
   // সার্চ ইনপুট ফিল্ড (data-name="Search")
   const searchInput = document.querySelector('[data-name="Search"]');
   
-  // CMS আইটেমগুলো ধারণ করা wrapper (data-search="product-list-wrapper")
-  const productListWrapper = document.querySelector('[data-search="product-list-wrapper"]');
+  // CMS প্রোডাক্ট আইটেমগুলো ধারণ করে এমন wrapper (যদি থাকে, উদাহরণস্বরূপ data-products="list-wrapper")
+  const productListWrapper = document.querySelector('[data-products="list-wrapper"]');
   
-  // প্রত্যেক CMS আইটেম (data-search="product-item")
-  const productItems = document.querySelectorAll('[data-search="product-item"]');
+  // প্রত্যেক CMS প্রোডাক্ট আইটেম (data-products="product-item")
+  const productItems = document.querySelectorAll('[data-products="product-item"]');
   
-  // Enter key চাপলে ফর্ম submit হওয়া আটকানোর জন্য
+  // Enter key চাপলে ফর্ম submit হওয়া আটকাতে\n",
   searchInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
       event.preventDefault();
     }
   });
   
-  // ইনপুট ইভেন্ট: ইনপুট পরিবর্তনের উপর ভিত্তি করে CMS আইটেম ফিল্টার করা হবে
+  // ইনপুট ইভেন্ট: সার্চ ইনপুটের উপর ভিত্তি করে প্রোডাক্টের নাম (data-products="product-name") ফিল্টার করা হবে\n",
   searchInput.addEventListener('input', function() {
     const query = searchInput.value.toLowerCase().trim();
     
     productItems.forEach(item => {
-      // CMS item এর নাম (data-search="product-name") খুঁজে বের করা হচ্ছে
-      const productNameElement = item.querySelector('[data-search="product-name"]');
+      // CMS প্রোডাক্ট আইটেমের মধ্যে প্রোডাক্টের নাম খুঁজতে\n",
+      const productNameElement = item.querySelector('[data-products="product-name"]');
       if (productNameElement) {
         const productName = productNameElement.textContent.toLowerCase();
-        // যদি সার্চ query আইটেমের নামের সাথে মিল পায়, তাহলে দেখাবে, নাহলে লুকিয়ে রাখবে
         if (productName.includes(query)) {
           item.style.display = 'block';
         } else {
