@@ -8,17 +8,17 @@ document.addEventListener("DOMContentLoaded", function () {
       group.forEach((item) => {
         if (
           item.parentElement &&
-          item.parentElement.classList.contains("if_fom-radio-btn")
+          item.parentElement.classList.contains("multi-form_radio-btn")
         ) {
-          item.parentElement.classList.remove("is-active-radio");
+          item.parentElement.classList.remove("is-active");
         }
       });
       if (
         radio.checked &&
         radio.parentElement &&
-        radio.parentElement.classList.contains("if_fom-radio-btn")
+        radio.parentElement.classList.contains("multi-form_radio-btn")
       ) {
-        radio.parentElement.classList.add("is-active-radio");
+        radio.parentElement.classList.add("is-active");
       }
     });
   });
