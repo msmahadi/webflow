@@ -45,11 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     steps.forEach((step, idx) => {
       const inputs = step.querySelectorAll('input, select, textarea');
       inputs.forEach((input) => {
-        if (idx === index) {
-          input.disabled = false;
-        } else {
-          input.disabled = true;
-        }
+        input.disabled = idx !== index;
       });
     });
   }
@@ -75,9 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let allFilled = true;
       requiredFields.forEach((field) => {
         if (field.type === 'radio') {
-          const radios = currentStep.querySelectorAll(
-            `input[name="${field.name}"]`
-          );
+          const radios = currentStep.querySelectorAll(`input[name="${field.name}"]`);
           let checked = false;
           radios.forEach((radio) => {
             if (radio.checked) checked = true;
@@ -134,6 +128,15 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       return;
     }
-    // On final step, let Webflow handle the submission.
+    // Before submission, ensure that all inputs in hidden steps are disabled (just to be extra sure)
+    steps.forEach((step, idx) => {
+      if (idx !== currentStepIndex) {
+        const inputs = step.querySelectorAll('input, select, textarea');
+        inputs.forEach((input) => {
+          input.disabled = true;
+        });
+      }
+    });
+    // Allow Webflow to handle the submission (do not call e.preventDefault())
   });
 });
