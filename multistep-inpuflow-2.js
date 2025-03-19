@@ -32,20 +32,35 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentStepIndex = 0;
   const historyStack = [];
 
+  // Initially hide the error message (opacity 0)
+  errorMessageDiv.style.opacity = "0";
+
   // Hide all steps
   function hideAllSteps() {
     steps.forEach((step) => (step.style.display = "none"));
   }
 
-  // Modified showStep: display the active step and disable inputs in all other (hidden) steps
+  // Modified showStep: display the active step and remove required attribute from inputs in hidden steps
   function showStep(index) {
     hideAllSteps();
     steps[index].style.display = "block";
-    // Enable inputs in the active step and disable inputs in hidden steps
+    // For each step, if it's active, restore required attribute if it was originally required.
+    // Otherwise, remove the required attribute.
     steps.forEach((step, idx) => {
       const inputs = step.querySelectorAll("input, select, textarea");
       inputs.forEach((input) => {
-        input.disabled = idx !== index;
+        if (idx === index) {
+          // Restore required if it was originally required (stored in data-original-required)
+          if (input.dataset.originalRequired === "true") {
+            input.required = true;
+          }
+        } else {
+          // If the input is currently required, store that information and remove the attribute.
+          if (input.required) {
+            input.dataset.originalRequired = "true";
+            input.required = false;
+          }
+        }
       });
     });
   }
@@ -84,9 +99,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
       if (!allFilled) {
-        errorMessageDiv.innerText = "অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন!";
+        // Show error message (the text can be set in Webflow; this code just handles the visibility)
+        errorMessageDiv.style.opacity = "1";
         setTimeout(() => {
-          errorMessageDiv.innerText = "";
+          errorMessageDiv.style.opacity = "0";
         }, 3000);
         return;
       }
@@ -130,15 +146,15 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       return;
     }
-    // Before submission, ensure that all inputs in hidden steps are disabled (just to be extra sure)
+    // Before submission, ensure that inputs in inactive steps remain without required attribute
     steps.forEach((step, idx) => {
       if (idx !== currentStepIndex) {
         const inputs = step.querySelectorAll("input, select, textarea");
         inputs.forEach((input) => {
-          input.disabled = true;
+          input.required = false;
         });
       }
     });
-    // Allow Webflow to handle the submission (do not call e.preventDefault())
+    // Let Webflow handle the submission naturally.
   });
 });
