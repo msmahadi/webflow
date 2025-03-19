@@ -37,16 +37,22 @@ document.addEventListener('DOMContentLoaded', function () {
     steps.forEach((step) => (step.style.display = 'none'));
   }
 
-  // Modified showStep: display the active step and disable inputs in all other (hidden) steps
+  // Modified showStep: display the active step and disable inputs in all other steps
   function showStep(index) {
-    hideAllSteps();
-    steps[index].style.display = 'block';
-    // Enable inputs in the active step and disable inputs in hidden steps
     steps.forEach((step, idx) => {
-      const inputs = step.querySelectorAll('input, select, textarea');
-      inputs.forEach((input) => {
-        input.disabled = idx !== index;
-      });
+      if (idx === index) {
+        step.style.display = 'block';
+        // Enable all inputs in the active step
+        step.querySelectorAll('input, select, textarea').forEach((input) => {
+          input.disabled = false;
+        });
+      } else {
+        step.style.display = 'none';
+        // Disable all inputs in inactive steps so that they won't trigger validation
+        step.querySelectorAll('input, select, textarea').forEach((input) => {
+          input.disabled = true;
+        });
+      }
     });
   }
 
@@ -63,34 +69,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Next Button Event – Modified: Remove required field validation so that even if fields are empty, navigation continues.
+  // Next Button Event – allow navigation even if required fields are empty
   nextButtons.forEach((button) => {
     button.addEventListener('click', function () {
-      // Removed validation code:
-      /*
-      const currentStep = steps[currentStepIndex];
-      const requiredFields = currentStep.querySelectorAll('[required]');
-      let allFilled = true;
-      requiredFields.forEach((field) => {
-        if (field.type === 'radio') {
-          const radios = currentStep.querySelectorAll(`input[name="${field.name}"]`);
-          let checked = false;
-          radios.forEach((radio) => {
-            if (radio.checked) checked = true;
-          });
-          if (!checked) allFilled = false;
-        } else if (field.value.trim() === '') {
-          allFilled = false;
-        }
-      });
-      if (!allFilled) {
-        errorMessageDiv.innerText = 'অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন!';
-        setTimeout(() => {
-          errorMessageDiv.innerText = '';
-        }, 3000);
-        return;
-      }
-      */
       const currentStep = steps[currentStepIndex];
       let nextStepNumber = this.dataset.next;
       if (!nextStepNumber) {
@@ -103,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
           nextStepNumber = parseInt(currentStep.dataset.step) + 1;
         }
       }
-
       const nextStepIndex = Array.from(steps).findIndex(
         (step) => step.dataset.step == nextStepNumber
       );
@@ -126,20 +106,19 @@ document.addEventListener('DOMContentLoaded', function () {
   // Form submit event listener (final step submission)
   form.addEventListener('submit', function (e) {
     const currentStep = steps[currentStepIndex];
-    // Only allow normal submission on the final step so Webflow handles the submission and success message.
+    // Allow normal submission only on the final step so that Webflow handles submission and success message.
     if (!currentStep.hasAttribute('data-final')) {
       e.preventDefault();
       return;
     }
-    // Before submission, ensure that all inputs in hidden steps are disabled
+    // Before submission, ensure that all inputs in inactive steps are disabled (should already be the case)
     steps.forEach((step, idx) => {
       if (idx !== currentStepIndex) {
-        const inputs = step.querySelectorAll('input, select, textarea');
-        inputs.forEach((input) => {
+        step.querySelectorAll('input, select, textarea').forEach((input) => {
           input.disabled = true;
         });
       }
     });
-    // Let Webflow handle the submission (do not call e.preventDefault())
+    // Let Webflow handle the submission naturally.
   });
 });
