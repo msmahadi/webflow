@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Only modify radio button functionality: 
-  // When a radio button is selected, add the "is-active-radio" class to its parent label
+  // Radio button functionality (do not change)
   const radioButtons = document.querySelectorAll('input[type="radio"]');
   radioButtons.forEach((radio) => {
     radio.addEventListener('change', function () {
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // The rest of your code (DO NOT DELETE OR CHANGE ANYTHING ELSE)
+  // Multi-step form functionality (do not change)
   const steps = document.querySelectorAll('.step');
   const nextButtons = document.querySelectorAll("[data-step='next-button']");
   const backButton = document.querySelector('#back-button');
@@ -33,21 +32,17 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentStepIndex = 0;
   const historyStack = [];
 
-  // সব স্টেপ হাইড করা
   function hideAllSteps() {
     steps.forEach((step) => (step.style.display = 'none'));
   }
 
-  // নির্দিষ্ট স্টেপ দেখানো
   function showStep(index) {
     hideAllSteps();
     steps[index].style.display = 'block';
   }
 
-  // প্রথম স্টেপ দেখানো
   showStep(currentStepIndex);
 
-  // non-final স্টেপে Enter key চাপলে সাবমিশন রোধ করা
   form.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       const currentStep = steps[currentStepIndex];
@@ -57,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Next Button Event
   nextButtons.forEach((button) => {
     button.addEventListener('click', function () {
       const currentStep = steps[currentStepIndex];
@@ -65,9 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let allFilled = true;
       requiredFields.forEach((field) => {
         if (field.type === 'radio') {
-          const radios = currentStep.querySelectorAll(
-            `input[name="${field.name}"]`
-          );
+          const radios = currentStep.querySelectorAll(`input[name="${field.name}"]`);
           let checked = false;
           radios.forEach((radio) => {
             if (radio.checked) checked = true;
@@ -108,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Back Button Event
   backButton.addEventListener('click', function () {
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
@@ -116,22 +107,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Form submit event listener (final step submission)
+  // Allow form submission normally via Webflow (only prevent if not on final step)
   form.addEventListener('submit', function (e) {
     const currentStep = steps[currentStepIndex];
-    // শুধুমাত্র final step (data-final attribute যুক্ত) এ সাবমিশন অনুমোদিত
     if (!currentStep.hasAttribute('data-final')) {
       e.preventDefault();
       return;
     }
-    e.preventDefault(); // default submission রোধ করা (Webflow এ যদি AJAX বা অন্যভাবে সাবমিট করতে চাও, সেটি এখানে যুক্ত করো)
-    errorMessageDiv.innerText = 'Form submitted successfully!';
-    setTimeout(() => {
-      errorMessageDiv.innerText = '';
-    }, 3000);
-    form.reset();
-    currentStepIndex = 0;
-    historyStack.length = 0;
-    showStep(currentStepIndex);
+    // When on final step, allow normal submission so that Webflow handles it and shows its success message.
   });
 });
