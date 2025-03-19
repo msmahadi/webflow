@@ -63,9 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Next Button Event
+  // Next Button Event – Modified: Remove required field validation so that even if fields are empty, navigation continues.
   nextButtons.forEach((button) => {
     button.addEventListener('click', function () {
+      // Removed validation code:
+      /*
       const currentStep = steps[currentStepIndex];
       const requiredFields = currentStep.querySelectorAll('[required]');
       let allFilled = true;
@@ -88,7 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
         return;
       }
-
+      */
+      const currentStep = steps[currentStepIndex];
       let nextStepNumber = this.dataset.next;
       if (!nextStepNumber) {
         const selectedInput = currentStep.querySelector(
@@ -128,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       return;
     }
-    // Before submission, ensure that all inputs in hidden steps are disabled (just to be extra sure)
+    // Before submission, ensure that all inputs in hidden steps are disabled
     steps.forEach((step, idx) => {
       if (idx !== currentStepIndex) {
         const inputs = step.querySelectorAll('input, select, textarea');
@@ -137,6 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
     });
-    // Allow Webflow to handle the submission (do not call e.preventDefault())
+    // Let Webflow handle the submission (do not call e.preventDefault())
   });
 });
