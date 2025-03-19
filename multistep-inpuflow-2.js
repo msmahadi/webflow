@@ -32,17 +32,32 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentStepIndex = 0;
   const historyStack = [];
 
+  // Hide all steps
   function hideAllSteps() {
     steps.forEach((step) => (step.style.display = 'none'));
   }
 
+  // Modified showStep: display the active step and disable inputs in all other (hidden) steps
   function showStep(index) {
     hideAllSteps();
     steps[index].style.display = 'block';
+    // Enable inputs in the active step and disable inputs in hidden steps
+    steps.forEach((step, idx) => {
+      const inputs = step.querySelectorAll('input, select, textarea');
+      inputs.forEach((input) => {
+        if (idx === index) {
+          input.disabled = false;
+        } else {
+          input.disabled = true;
+        }
+      });
+    });
   }
 
+  // Initially display the first step
   showStep(currentStepIndex);
 
+  // Prevent form submission via Enter key on non-final steps
   form.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       const currentStep = steps[currentStepIndex];
@@ -52,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Next Button Event
   nextButtons.forEach((button) => {
     button.addEventListener('click', function () {
       const currentStep = steps[currentStepIndex];
@@ -59,7 +75,9 @@ document.addEventListener('DOMContentLoaded', function () {
       let allFilled = true;
       requiredFields.forEach((field) => {
         if (field.type === 'radio') {
-          const radios = currentStep.querySelectorAll(`input[name="${field.name}"]`);
+          const radios = currentStep.querySelectorAll(
+            `input[name="${field.name}"]`
+          );
           let checked = false;
           radios.forEach((radio) => {
             if (radio.checked) checked = true;
@@ -100,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Back Button Event
   backButton.addEventListener('click', function () {
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
@@ -107,13 +126,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Allow form submission normally via Webflow (only prevent if not on final step)
+  // Form submit event listener (final step submission)
   form.addEventListener('submit', function (e) {
     const currentStep = steps[currentStepIndex];
+    // Only allow normal submission on the final step so Webflow handles the submission and success message.
     if (!currentStep.hasAttribute('data-final')) {
       e.preventDefault();
       return;
     }
-    // When on final step, allow normal submission so that Webflow handles it and shows its success message.
+    // On final step, let Webflow handle the submission.
   });
 });
