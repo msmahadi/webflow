@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Multi-step form functionality (do not change)
-  const steps = document.querySelectorAll(".step");
+  const steps = document.querySelectorAll(".multi-form_step");
   const nextButtons = document.querySelectorAll("[data-step='next-button']");
   const backButton = document.querySelector("#back-button");
   const form = document.getElementById("multiStepForm");
