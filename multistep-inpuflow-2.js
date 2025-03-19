@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Modified showStep: display the active step and remove required attribute from inputs in hidden steps
   function showStep(index) {
     hideAllSteps();
-    steps[index].style.display = "block";
+    steps[index].style.display = "flex";
     // For each step, if it's active, restore required attribute if it was originally required.
     // Otherwise, remove the required attribute.
     steps.forEach((step, idx) => {
