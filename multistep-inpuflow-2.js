@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
       group.forEach((item) => {
         if (
           item.parentElement &&
-          item.parentElement.classList.contains("multi-form_radio-btn")
+          item.parentElement.classList.contains("multi-form_check-btn")
         ) {
           item.parentElement.classList.remove("is-active");
         }
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (
         radio.checked &&
         radio.parentElement &&
-        radio.parentElement.classList.contains("multi-form_radio-btn")
+        radio.parentElement.classList.contains("multi-form_check-btn")
       ) {
         radio.parentElement.classList.add("is-active");
       }
