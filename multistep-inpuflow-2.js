@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
       if (!allFilled) {
-        // Show error message (visibility handled via opacity; text can be set in Webflow)
+        // Show error message (the text can be set in Webflow; this code just handles the visibility)
         errorMessageDiv.style.opacity = "1";
         setTimeout(() => {
           errorMessageDiv.style.opacity = "0";
@@ -161,27 +161,40 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /* ------------------ Date/Time Picker Functionality ------------------
-     This function initializes date and time pickers based solely on attributes.
-     It targets inputs with:
-       - type="date" and attribute data-picker="date"  -> Formats as "16 March 2025"
-       - type="time" and attribute data-picker="time"  -> Formats as "01:18 AM"
-     It also attaches a click event to open the native picker (if supported).
+     This function initializes the date and time pickers based solely on attributes.
+     
+     It targets:
+       - Date inputs with type="date" and attribute data-picker="date"
+         -> On change, it reads the native value (format: "yyyy-MM-dd"), converts it
+            to a formatted string (e.g., "16 March 2025"), and stores it in a data attribute
+            (data-display) on the input.
+       - Time inputs with type="time" and attribute data-picker="time"
+         -> On change, it reads the native value (format: "HH:MM"), converts it to a formatted
+            string (e.g., "01:18 AM"), and stores it in a data attribute (data-display) on the input.
+     
+     Additionally, when the input is clicked, if the browser supports native pickers via showPicker(),
+     it will open the picker.
+     
+     Note: The input's value remains in the native format (so that submission works correctly),
+           while the formatted value is available in the "data-display" attribute for visual use
+           via Webflow interactions.
      --------------------------------------------------------------------- */
   function initializePickers() {
     // Date Picker: select inputs with type="date" and data-picker="date"
     const dateInputs = document.querySelectorAll('input[type="date"][data-picker="date"]');
-    dateInputs.forEach(function(input) {
-      input.addEventListener("change", function() {
+    dateInputs.forEach(function (input) {
+      input.addEventListener("change", function () {
         if (!input.value) return;
-        // input.value is in "YYYY-MM-DD" format
+        // input.value is in "yyyy-MM-dd" format
         const dateObj = new Date(input.value);
         const options = { day: "numeric", month: "long", year: "numeric" };
         // Format e.g., "16 March 2025"
         const formattedDate = dateObj.toLocaleDateString("en-US", options);
-        // Update the input value with the formatted date
-        input.value = formattedDate;
+        // Instead of changing input.value (which would cause a format error),
+        // store the formatted date in a data attribute for visual use.
+        input.setAttribute("data-display", formattedDate);
       });
-      input.addEventListener("click", function() {
+      input.addEventListener("click", function () {
         if (typeof input.showPicker === "function") {
           input.showPicker();
         }
@@ -190,8 +203,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Time Picker: select inputs with type="time" and data-picker="time"
     const timeInputs = document.querySelectorAll('input[type="time"][data-picker="time"]');
-    timeInputs.forEach(function(input) {
-      input.addEventListener("change", function() {
+    timeInputs.forEach(function (input) {
+      input.addEventListener("change", function () {
         if (!input.value) return;
         // input.value is in "HH:MM" (24-hour) format
         const [hourStr, minute] = input.value.split(":");
@@ -199,11 +212,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const ampm = hour >= 12 ? "PM" : "AM";
         hour = hour % 12;
         if (hour === 0) hour = 12;
-        // Format e.g., "01:18 AM" (pad hour to 2 digits if needed)
+        // Format e.g., "01:18 AM"
         const formattedTime = ("0" + hour).slice(-2) + ":" + minute + " " + ampm;
-        input.value = formattedTime;
+        // Store the formatted time in a data attribute for visual use.
+        input.setAttribute("data-display", formattedTime);
       });
-      input.addEventListener("click", function() {
+      input.addEventListener("click", function () {
         if (typeof input.showPicker === "function") {
           input.showPicker();
         }
@@ -212,6 +226,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Call the date/time picker initializer function.
-  // It uses only attribute selectors (data-picker="date" and data-picker="time")
   initializePickers();
 });
