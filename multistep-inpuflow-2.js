@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Radio button functionality (do not change)
-  const radioButtons = document.querySelectorAll('input[type="radio"]');
+  const radioButtons = document.querySelectorAll(
+    'input[type="radio", input[type="checkbox"]'
+  );
   radioButtons.forEach((radio) => {
     radio.addEventListener("change", function () {
       const name = radio.getAttribute("name");
