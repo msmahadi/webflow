@@ -1,6 +1,3 @@
-// Github Update show date and time picker visually multistep-inpuflow-2.js
-// 12:58PM 20 March 2025
-
 document.addEventListener("DOMContentLoaded", function () {
   // Radio button functionality (do not change)
   const radioButtons = document.querySelectorAll(
@@ -150,6 +147,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Back Button Event
   backButton.addEventListener("click", function () {
+    // ***** New Code Added: Reset the inputs of the current step before going back *****
+    const currentStep = steps[currentStepIndex];
+    const inputs = currentStep.querySelectorAll("input, select, textarea");
+    inputs.forEach((input) => {
+      if (input.type === "radio" || input.type === "checkbox") {
+        input.checked = false;
+      } else {
+        input.value = "";
+      }
+      // Optionally, clear any data attributes if needed:
+      input.removeAttribute("data-display");
+    });
+    // *********************************************************************************
+
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
       showStep(currentStepIndex);
