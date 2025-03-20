@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Radio button functionality (do not change)
+  // Radio & Checkbox Button Functionality (do not change)
   const radioButtons = document.querySelectorAll(
     'input[type="radio"], input[type="checkbox"]'
   );
@@ -36,6 +36,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initially hide the error message (opacity 0)
   errorMessageDiv.style.opacity = "0";
+
+  // Attach "input" event listeners to all inputs (to mark them as filled when user interacts)
+  const allInputs = form.querySelectorAll("input, select, textarea");
+  allInputs.forEach((input) => {
+    input.addEventListener("input", function () {
+      input.dataset.filled = "true";
+    });
+  });
 
   // Hide all steps
   function hideAllSteps() {
@@ -114,13 +122,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
       if (!allFilled) {
-        // Show error message (the text can be set in Webflow; this code just handles the visibility)
+        // Show error message (visibility handled via opacity; text can be set in Webflow)
         errorMessageDiv.style.opacity = "1";
         setTimeout(() => {
           errorMessageDiv.style.opacity = "0";
         }, 3000);
         return;
       }
+
+      // NEW CODE: Reset inputs of the current step that were NOT interacted with
+      const inputs = currentStep.querySelectorAll("input, select, textarea");
+      inputs.forEach((input) => {
+        if (!input.dataset.filled || input.dataset.filled !== "true") {
+          if (input.type === "radio" || input.type === "checkbox") {
+            input.checked = false;
+          } else {
+            input.value = "";
+          }
+          input.removeAttribute("data-display");
+        }
+      });
+      // Clear the 'filled' flag for current step's inputs
+      inputs.forEach((input) => {
+        delete input.dataset.filled;
+      });
+      // ---------------------------------------------------------------------------
 
       let nextStepNumber = this.dataset.next;
       if (!nextStepNumber) {
@@ -147,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Back Button Event
   backButton.addEventListener("click", function () {
-    // ***** New Code Added: Reset the inputs of the current step before going back *****
+    // Reset inputs of the current step before going back
     const currentStep = steps[currentStepIndex];
     const inputs = currentStep.querySelectorAll("input, select, textarea");
     inputs.forEach((input) => {
@@ -156,10 +182,9 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         input.value = "";
       }
-      // Optionally, clear any data attributes if needed:
       input.removeAttribute("data-display");
+      delete input.dataset.filled;
     });
-    // *********************************************************************************
 
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
