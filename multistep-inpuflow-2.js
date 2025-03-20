@@ -37,14 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initially hide the error message (opacity 0)
   errorMessageDiv.style.opacity = "0";
 
-  // ***** NEW CODE: Store original name for each input so we can restore it later *****
+  // ***** NEW CODE: Store original name for each input *****
   const allInputs = form.querySelectorAll("input, select, textarea");
   allInputs.forEach((input) => {
     if (input.getAttribute("name")) {
       input.dataset.originalName = input.getAttribute("name");
     }
   });
-  // **********************************************************************************
+  // ********************************************************
 
   // Attach "input" event listeners to mark inputs as filled when user interacts
   allInputs.forEach((input) => {
@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const inputs = step.querySelectorAll("input, select, textarea");
       inputs.forEach((input) => {
         if (idx === index) {
-          // Restore required if it was originally required (stored in data-originalRequired)
+          // Restore required if it was originally required (stored in data-original-required)
           if (input.dataset.originalRequired === "true") {
             input.required = true;
           }
         } else {
-          // If the input is currently required, store that info and remove the attribute.
+          // If the input is currently required, store that information and remove the attribute.
           if (input.required) {
             input.dataset.originalRequired = "true";
             input.required = false;
@@ -140,27 +140,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // ***** NEW CODE: For inputs in the current step that were NOT interacted with,
       // remove their name attribute so they won't be submitted.
-      const inputs = currentStep.querySelectorAll("input, select, textarea");
-      inputs.forEach((input) => {
-        if (!input.dataset.filled || input.dataset.filled !== "true") {
-          // Remove the name attribute to exclude from submission
-          input.removeAttribute("name");
-          // Optionally, clear the value if desired:
-          if (input.type === "radio" || input.type === "checkbox") {
-            input.checked = false;
-          } else {
-            input.value = "";
+      // Process radio groups separately.
+      const radioInputs = currentStep.querySelectorAll('input[type="radio"]');
+      const processedRadioGroups = new Set();
+      radioInputs.forEach((radio) => {
+        const originalName = radio.dataset.originalName || radio.getAttribute("name");
+        if (processedRadioGroups.has(originalName)) return;
+        // Get all radios in this group (filter by originalName)
+        const groupRadios = Array.from(currentStep.querySelectorAll('input[type="radio"]')).filter(
+          (r) => (r.dataset.originalName || r.getAttribute("name")) === originalName
+        );
+        let groupFilled = false;
+        groupRadios.forEach((r) => {
+          if (r.dataset.filled === "true" || r.checked) {
+            groupFilled = true;
           }
+        });
+        if (!groupFilled) {
+          groupRadios.forEach((r) => {
+            r.removeAttribute("name");
+          });
+        } else {
+          groupRadios.forEach((r) => {
+            if (!r.hasAttribute("name") && r.dataset.originalName) {
+              r.setAttribute("name", r.dataset.originalName);
+            }
+          });
+        }
+        processedRadioGroups.add(originalName);
+      });
+
+      // Process non-radio inputs
+      const otherInputs = currentStep.querySelectorAll("input:not([type='radio']), select, textarea");
+      otherInputs.forEach((input) => {
+        if (!input.dataset.filled || input.dataset.filled !== "true") {
+          input.removeAttribute("name");
+          input.value = "";
           input.removeAttribute("data-display");
         } else {
-          // If input was filled, restore its original name (if missing)
           if (!input.hasAttribute("name") && input.dataset.originalName) {
             input.setAttribute("name", input.dataset.originalName);
           }
         }
       });
       // Clear the 'filled' flag for current step's inputs
-      inputs.forEach((input) => {
+      const allCurrentInputs = currentStep.querySelectorAll("input, select, textarea");
+      allCurrentInputs.forEach((input) => {
         delete input.dataset.filled;
       });
       // ************************************************************************************
@@ -201,8 +226,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       input.removeAttribute("data-display");
       delete input.dataset.filled;
-      // Also remove the name attribute so that old default values are not submitted
-      input.removeAttribute("name");
+      // Do not remove name for radio buttons here (to preserve group integrity)
+      if (input.type !== "radio") {
+        input.removeAttribute("name");
+      }
     });
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
