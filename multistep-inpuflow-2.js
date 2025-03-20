@@ -37,8 +37,16 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initially hide the error message (opacity 0)
   errorMessageDiv.style.opacity = "0";
 
-  // Attach "input" event listeners to all inputs (to mark them as filled when user interacts)
+  // ***** NEW CODE: Store original name for each input so we can restore it later *****
   const allInputs = form.querySelectorAll("input, select, textarea");
+  allInputs.forEach((input) => {
+    if (input.getAttribute("name")) {
+      input.dataset.originalName = input.getAttribute("name");
+    }
+  });
+  // **********************************************************************************
+
+  // Attach "input" event listeners to mark inputs as filled when user interacts
   allInputs.forEach((input) => {
     input.addEventListener("input", function () {
       input.dataset.filled = "true";
@@ -60,12 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const inputs = step.querySelectorAll("input, select, textarea");
       inputs.forEach((input) => {
         if (idx === index) {
-          // Restore required if it was originally required (stored in data-original-required)
+          // Restore required if it was originally required (stored in data-originalRequired)
           if (input.dataset.originalRequired === "true") {
             input.required = true;
           }
         } else {
-          // If the input is currently required, store that information and remove the attribute.
+          // If the input is currently required, store that info and remove the attribute.
           if (input.required) {
             input.dataset.originalRequired = "true";
             input.required = false;
@@ -88,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // ✅ **Range Input Functionality**
+  // ✅ Range Input Functionality (using attribute for display)
   const rangeInputs = document.querySelectorAll('input[type="range"]');
   rangeInputs.forEach((range) => {
     const display = document.querySelector(
@@ -122,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
       if (!allFilled) {
-        // Show error message (visibility handled via opacity; text can be set in Webflow)
+        // Show error message (visibility controlled via opacity; text can be set in Webflow)
         errorMessageDiv.style.opacity = "1";
         setTimeout(() => {
           errorMessageDiv.style.opacity = "0";
@@ -130,23 +138,32 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // NEW CODE: Reset inputs of the current step that were NOT interacted with
+      // ***** NEW CODE: For inputs in the current step that were NOT interacted with,
+      // remove their name attribute so they won't be submitted.
       const inputs = currentStep.querySelectorAll("input, select, textarea");
       inputs.forEach((input) => {
         if (!input.dataset.filled || input.dataset.filled !== "true") {
+          // Remove the name attribute to exclude from submission
+          input.removeAttribute("name");
+          // Optionally, clear the value if desired:
           if (input.type === "radio" || input.type === "checkbox") {
             input.checked = false;
           } else {
             input.value = "";
           }
           input.removeAttribute("data-display");
+        } else {
+          // If input was filled, restore its original name (if missing)
+          if (!input.hasAttribute("name") && input.dataset.originalName) {
+            input.setAttribute("name", input.dataset.originalName);
+          }
         }
       });
       // Clear the 'filled' flag for current step's inputs
       inputs.forEach((input) => {
         delete input.dataset.filled;
       });
-      // ---------------------------------------------------------------------------
+      // ************************************************************************************
 
       let nextStepNumber = this.dataset.next;
       if (!nextStepNumber) {
@@ -184,8 +201,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       input.removeAttribute("data-display");
       delete input.dataset.filled;
+      // Also remove the name attribute so that old default values are not submitted
+      input.removeAttribute("name");
     });
-
     if (historyStack.length > 0) {
       currentStepIndex = historyStack.pop();
       showStep(currentStepIndex);
@@ -244,8 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const options = { day: "numeric", month: "long", year: "numeric" };
         // Format e.g., "16 March 2025"
         const formattedDate = dateObj.toLocaleDateString("en-US", options);
-        // Instead of changing input.value (which would cause a format error),
-        // store the formatted date in a data attribute for visual use.
+        // Store the formatted date in a data attribute for visual use.
         input.setAttribute("data-display", formattedDate);
       });
       input.addEventListener("click", function () {
