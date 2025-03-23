@@ -95,6 +95,10 @@ function submitBookingForm() {
 // ফর্ম initialize করার ফাংশন
 function initBookingForm() {
   const form = document.getElementById('bookingForm');
+
+  // Webflow এর default action attribute মুছে ফেলুন
+  form.removeAttribute('action');
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     submitBookingForm();
