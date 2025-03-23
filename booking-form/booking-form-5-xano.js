@@ -8,36 +8,36 @@
 
 // ২৪-ঘন্টা সময়কে ১২-ঘন্টা ফরম্যাটে কনভার্ট করার ফাংশন (যদি প্রয়োজন হয়)
 function convertTimeTo12HourFormat(time24) {
-  const [hour, minute] = time24.split(":");
+  const [hour, minute] = time24.split(':');
   let h = parseInt(hour, 10);
-  const ampm = h >= 12 ? "PM" : "AM";
+  const ampm = h >= 12 ? 'PM' : 'AM';
   h = h % 12 || 12;
-  return `${h.toString().padStart(2, "0")}:${minute}${ampm}`;
+  return `${h.toString().padStart(2, '0')}:${minute}${ampm}`;
 }
 
 // ফর্ম সাবমিটের ফাংশন
 function submitBookingForm() {
-  const form = document.getElementById("bookingForm");
-  const submitButton = form.querySelector("#msf-submit");
-  const successMessage = document.getElementById("successMessage");
-  const errorMessage = document.getElementById("errorMessage");
+  const form = document.getElementById('bookingForm');
+  const submitButton = form.querySelector('#msf-submit');
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
 
   // পূর্বের message গুলো hide করা
-  successMessage.style.display = "none";
-  errorMessage.style.display = "none";
+  successMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
 
   // ইনপুট ভ্যালু সংগ্রহ করা (hidden ইনপুট থেকে)
-  const date = document.getElementById("date").value;
-  const time = document.getElementById("time").value;
-  const fullname = document.getElementById("fullname").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const location = document.getElementById("location").value.trim();
-  const message = document.getElementById("message").value.trim();
-  const Image_link = document.getElementById("Image_link").value.trim();
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
+  const fullname = document.getElementById('fullname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const location = document.getElementById('location').value.trim();
+  const message = document.getElementById('message').value.trim();
+  const Image_link = document.getElementById('Image_link').value.trim();
 
   // Required ফিল্ড চেক
   if (!date || !time || !fullname || !email) {
-    errorMessage.style.display = "block";
+    errorMessage.style.display = 'block';
     return;
   }
 
@@ -57,34 +57,34 @@ function submitBookingForm() {
   // সাবমিট বাটনের স্টেট আপডেট করা
   submitButton.disabled = true;
   const originalText = submitButton.textContent;
-  submitButton.textContent = "Please wait...";
+  submitButton.textContent = 'Please wait...';
 
   // **নতুন যুক্ত করা: HTML attribute থেকে endpoint URL নিয়েছি**
-  const endpointUrl = form.getAttribute("data-database-endpoint-url");
+  const endpointUrl = form.getAttribute('data-database-endpoint-url');
 
   // Xano API POST request করা (এখানে HTML থেকে নিয়েই URL control হবে)
   fetch(endpointUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
       return response.json();
     })
     .then((data) => {
-      successMessage.style.display = "block";
-      errorMessage.style.display = "none";
+      successMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
       form.reset();
 
       // ✅ **নতুন যুক্ত করা Email ফাংশন Call**
       sendEmailToGoogleAppsScript(formData);
     })
     .catch((error) => {
-      errorMessage.style.display = "block";
-      successMessage.style.display = "none";
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'none';
     })
     .finally(() => {
       submitButton.disabled = false;
@@ -92,12 +92,11 @@ function submitBookingForm() {
     });
 }
 
-// ফর্ম initialize করার ফাংশন (এবার custom element হিসেবে div ব্যবহারের জন্য)
+// ফর্ম initialize করার ফাংশন
 function initBookingForm() {
-  // যদি আপনার সাবমিট বাটনটি div হয়, তাহলে ফর্মের 'submit' ইভেন্টের পরিবর্তে ক্লিক ইভেন্ট ব্যবহার করুন
-  const submitDiv = document.getElementById("msf-submit");
-  submitDiv.addEventListener("click", function (e) {
-    e.preventDefault(); // যদিও div-এ সাধারণত ডিফল্ট সাবমিট হয় না, তবুও এভাবে নিশ্চিত করা যায়
+  const form = document.getElementById('bookingForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
     submitBookingForm();
   });
 }
@@ -109,7 +108,7 @@ function initDateTimePickers() {
 }
 
 // DOM ready হলে initialize function call করা হবে
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
   initBookingForm();
   initDateTimePickers();
   // date-time-xano.js এর ফাংশন call করা হচ্ছে, যা radio button group তৈরি করবে
