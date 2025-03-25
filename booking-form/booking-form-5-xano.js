@@ -6,7 +6,7 @@
     - এখানে কোন কোড পরিবর্তন করা হয়নি। ফর্ম সাবমিটের সময় hidden ইনপুট (date ও time) থেকে value নেওয়া হবে।
 */
 
-// ২৪-ঘন্টা সময়কে ১২-ঘন্টা ফরম্যাটে কনভার্ট করার ফাংশন (যদি প্রয়োজন হয়)
+// ২৪-ঘণ্টা সময়কে ১২-ঘণ্টা ফরম্যাটে কনভার্ট করার ফাংশন (যদি প্রয়োজন হয়)
 function convertTimeTo12HourFormat(time24) {
   const [hour, minute] = time24.split(':');
   let h = parseInt(hour, 10);
@@ -41,7 +41,7 @@ function submitBookingForm() {
     return;
   }
 
-  // ১২-ঘন্টা ফরম্যাটে convert করা (যদি প্রয়োজন হয়)
+  // ১২-ঘণ্টা ফরম্যাটে convert করা (যদি প্রয়োজন হয়)
   // const formattedTime = convertTimeTo12HourFormat(time);
   const formData = {
     Date: dateInput.value,
@@ -81,11 +81,9 @@ function submitBookingForm() {
       // ফর্ম reset করা
       form.reset();
 
-      // ✅ **নতুন যুক্ত করা: setTimeout ব্যবহার করে date & time reset করা**
-      setTimeout(() => {
-        dateInput.value = '';
-        timeInput.value = '';
-      }, 10); // ছোট delay রাখছি যাতে DOM properly update হয়।
+      // date ও time ইনপুট ফিল্ড reset করা
+      dateInput.value = '';
+      timeInput.value = '';
 
       // ✅ **নতুন যুক্ত করা: Email ফাংশন Call**
       sendEmailToGoogleAppsScript(formData);
