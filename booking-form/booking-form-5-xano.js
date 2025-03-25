@@ -77,9 +77,15 @@ function submitBookingForm() {
     .then((data) => {
       successMessage.style.display = 'block';
       errorMessage.style.display = 'none';
+      
+      // ফর্ম reset করা
       form.reset();
+      
+      // যদি form.reset() date ও time ইনপুটগুলো reset না করে, তাহলে ম্যানুয়ালি খালি করে দেওয়া
+      document.getElementById('date').value = '';
+      document.getElementById('time').value = '';
 
-      // ✅ **নতুন যুক্ত করা Email ফাংশন Call**
+      // ✅ **নতুন যুক্ত করা: Email ফাংশন Call**
       sendEmailToGoogleAppsScript(formData);
     })
     .catch((error) => {
@@ -120,6 +126,10 @@ function initDateTimePickers() {
 
 // DOM ready হলে initialize function call করা হবে
 document.addEventListener('DOMContentLoaded', function () {
+  // প্রথম থেকেই success ও error message hide করে রাখা
+  document.getElementById('successMessage').style.display = 'none';
+  document.getElementById('errorMessage').style.display = 'none';
+
   initBookingForm();
   initDateTimePickers();
   // date-time-xano.js এর ফাংশন call করা হচ্ছে, যা radio button group তৈরি করবে
