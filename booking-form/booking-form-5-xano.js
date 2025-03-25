@@ -27,8 +27,8 @@ function submitBookingForm() {
   errorMessage.style.display = 'none';
 
   // ইনপুট ভ্যালু সংগ্রহ করা (hidden ইনপুট থেকে)
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('time').value;
+  const dateInput = document.getElementById('date');
+  const timeInput = document.getElementById('time');
   const fullname = document.getElementById('fullname').value.trim();
   const email = document.getElementById('email').value.trim();
   const location = document.getElementById('location').value.trim();
@@ -36,7 +36,7 @@ function submitBookingForm() {
   const Image_link = document.getElementById('Image_link').value.trim();
 
   // Required ফিল্ড চেক
-  if (!date || !time || !fullname || !email) {
+  if (!dateInput.value || !timeInput.value || !fullname || !email) {
     errorMessage.style.display = 'block';
     return;
   }
@@ -44,9 +44,9 @@ function submitBookingForm() {
   // ১২-ঘন্টা ফরম্যাটে convert করা (যদি প্রয়োজন হয়)
   // const formattedTime = convertTimeTo12HourFormat(time);
   const formData = {
-    Date: date,
+    Date: dateInput.value,
     // Time_text: formattedTime,
-    Time_text: time,
+    Time_text: timeInput.value,
     Full_name: fullname,
     Email: email,
     Location_text: location,
@@ -80,10 +80,12 @@ function submitBookingForm() {
       
       // ফর্ম reset করা
       form.reset();
-      
-      // যদি form.reset() date ও time ইনপুটগুলো reset না করে, তাহলে ম্যানুয়ালি খালি করে দেওয়া
-      document.getElementById('date').value = '';
-      document.getElementById('time').value = '';
+
+      // ✅ **নতুন যুক্ত করা: setTimeout ব্যবহার করে date & time reset করা**
+      setTimeout(() => {
+        dateInput.value = '';
+        timeInput.value = '';
+      }, 10); // ছোট delay রাখছি যাতে DOM properly update হয়।
 
       // ✅ **নতুন যুক্ত করা: Email ফাংশন Call**
       sendEmailToGoogleAppsScript(formData);
