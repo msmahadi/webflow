@@ -1,7 +1,7 @@
 // alert('booking-form-5-xano-html-control.html');
 
 /* 
-    booking-form-5-xano-html-control.js
+    booking-form-5-xano.js
     - এই ফাইলে ফর্ম সাবমিট, ইনপুট ফিল্ড initialization, এবং অন্যান্য ফাংশন আছে।
     - এখানে কোন কোড পরিবর্তন করা হয়নি। ফর্ম সাবমিটের সময় hidden ইনপুট (date ও time) থেকে value নেওয়া হবে।
 */
