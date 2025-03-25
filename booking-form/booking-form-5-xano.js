@@ -42,7 +42,7 @@ function submitBookingForm() {
   }
 
   // ১২-ঘন্টা ফরম্যাটে convert করা (যদি প্রয়োজন হয়)
-  //   const formattedTime = convertTimeTo12HourFormat(time);
+  // const formattedTime = convertTimeTo12HourFormat(time);
   const formData = {
     Date: date,
     // Time_text: formattedTime,
@@ -96,13 +96,20 @@ function submitBookingForm() {
 function initBookingForm() {
   const form = document.getElementById('bookingForm');
 
-  // Webflow এর default action attribute মুছে ফেলুন
+  // Webflow এর default action attribute মুছে ফেলা
   form.removeAttribute('action');
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    submitBookingForm();
-  });
+  // Capturing phase এ submit ইভেন্ট listener attach করা
+  form.addEventListener(
+    'submit',
+    function (e) {
+      // Prevent default browser behavior and Webflow এর সাবমিশন
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      submitBookingForm();
+    },
+    true // Capturing phase
+  );
 }
 
 // অন্যান্য ইনপুট ফিল্ডের জন্য initialization (যদি প্রয়োজন হয়)
