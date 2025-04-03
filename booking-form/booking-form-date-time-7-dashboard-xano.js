@@ -6,11 +6,11 @@
 
 function initDateTimeXano() {
   // HTML উপাদানগুলো নির্বাচন করা হচ্ছে
-  const form = document.getElementById('bookingForm');
-  const dateOptionsContainer = document.getElementById('dateOptions');
-  const timeOptionsContainer = document.getElementById('timeOptions');
-  const hiddenDateInput = document.getElementById('date');
-  const hiddenTimeInput = document.getElementById('time');
+  const form = document.getElementById('msf-bookingForm');
+  const dateOptionsContainer = document.getElementById('msf-dateOptions');
+  const timeOptionsContainer = document.getElementById('msf-timeOptions');
+  const hiddenDateInput = document.getElementById('msf-date');
+  const hiddenTimeInput = document.getElementById('msf-time');
 
   // শুরুতে টাইম অপশন লুকানো থাকবে
   timeOptionsContainer.style.display = 'none';
@@ -98,15 +98,15 @@ function initDateTimeXano() {
   // Date অপশন তৈরি করার ফাংশন
   function createDateOption(dateValue, timeArray) {
     const dateItem = document.createElement('div');
-    dateItem.className = 'radio-item';
+    dateItem.className = 'msf-radio-item';
     dateItem.textContent = formatDateDisplay(dateValue);
 
     dateItem.addEventListener('click', function () {
       // সকল তারিখ অপশনের active ক্লাস সরানো
       document
-        .querySelectorAll('#dateOptions .radio-item')
-        .forEach((item) => item.classList.remove('is-active'));
-      dateItem.classList.add('is-active');
+        .querySelectorAll('#msf-dateOptions .msf-radio-item')
+        .forEach((item) => item.classList.remove('msf-is-active'));
+      dateItem.classList.add('msf-is-active');
       hiddenDateInput.value = dateValue;
 
       // শুধু ব্যবহারকারীর ক্লিকে টাইম অপশনগুলো দেখানো হবে
@@ -127,13 +127,13 @@ function initDateTimeXano() {
     timeOptionsContainer.innerHTML = '';
     sortTimes(timeArray).forEach((timeValue) => {
       const timeItem = document.createElement('div');
-      timeItem.className = 'radio-item';
+      timeItem.className = 'msf-radio-item';
       timeItem.textContent = timeValue;
       timeItem.addEventListener('click', function () {
         document
-          .querySelectorAll('#timeOptions .radio-item')
-          .forEach((item) => item.classList.remove('is-active'));
-        timeItem.classList.add('is-active');
+          .querySelectorAll('#msf-timeOptions .msf-radio-item')
+          .forEach((item) => item.classList.remove('msf-is-active'));
+        timeItem.classList.add('msf-is-active');
         hiddenTimeInput.value = timeValue;
       });
       timeOptionsContainer.appendChild(timeItem);
