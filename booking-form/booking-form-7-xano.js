@@ -17,23 +17,23 @@ function convertTimeTo12HourFormat(time24) {
 
 // ফর্ম সাবমিটের ফাংশন
 function submitBookingForm() {
-  const form = document.getElementById('bookingForm');
+  const form = document.getElementById('msf-bookingForm');
   const submitButton = form.querySelector('#msf-submit');
-  const successMessage = document.getElementById('successMessage');
-  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('msf-successMessage');
+  const errorMessage = document.getElementById('msf-errorMessage');
 
   // পূর্বের message গুলো hide করা
   successMessage.style.display = 'none';
   errorMessage.style.display = 'none';
 
   // ইনপুট ভ্যালু সংগ্রহ করা (hidden ইনপুট থেকে)
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('time').value;
-  const fullname = document.getElementById('fullname').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const location = document.getElementById('location').value.trim();
-  const message = document.getElementById('message').value.trim();
-  const Image_link = document.getElementById('Image_link').value.trim();
+  const date = document.getElementById('msf-date').value;
+  const time = document.getElementById('msf-time').value;
+  const fullname = document.getElementById('msf-fullname').value.trim();
+  const email = document.getElementById('msf-email').value.trim();
+  const location = document.getElementById('msf-location').value.trim();
+  const message = document.getElementById('msf-message').value.trim();
+  const Image_link = document.getElementById('msf-Image_link').value.trim();
 
   // Required ফিল্ড চেক
   if (!date || !time || !fullname || !email) {
@@ -94,7 +94,7 @@ function submitBookingForm() {
 
 // ফর্ম initialize করার ফাংশন
 function initBookingForm() {
-  const form = document.getElementById('bookingForm');
+  const form = document.getElementById('msf-bookingForm');
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     submitBookingForm();
