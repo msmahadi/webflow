@@ -1,5 +1,5 @@
 function sendEmailToGoogleAppsScript(data) {
-  const formID = document.getElementById('bookingForm');
+  const formID = document.getElementById('msf-bookingForm');
 
   // **নতুন যুক্ত করা: HTML attribute থেকে appScriptURL URL নিয়েছি**
   const appScriptURL = formID.getAttribute('data-google-sheet-appscript-url');
