@@ -114,3 +114,56 @@ document.addEventListener('DOMContentLoaded', function () {
   // date-time-xano.js এর ফাংশন call করা হচ্ছে, যা radio button group তৈরি করবে
   initDateTimeXano();
 });
+
+// ================================
+// নতুন যুক্ত করা: Site Access Verify Feature
+// ================================
+
+document.addEventListener('DOMContentLoaded', async function () {
+  try {
+    // ফর্মটি নিয়ে data-access attribute থেকে value নেওয়া
+    const form = document.getElementById('msf-bookingForm');
+    if (!form) return; // ফর্ম না থাকলে কিছুই না করা
+    const dataAccessValue = form.getAttribute('data-access');
+
+    // Xano API থেকে site access তথ্য fetch করা
+    const response = await fetch(
+      'https://x8ki-letl-twmt.n7.xano.io/api:M-6VoMrH/booking_form_user_dashboard'
+    );
+    const siteData = await response.json();
+
+    // API থেকে পাওয়া তথ্যের সাথে data-access attribute তুলনা করা
+    const record = siteData.find((item) => item.site_id === dataAccessValue);
+
+    // যদি record না পাওয়া যায় অথবা site_access "true-access" না হয়,
+    // তাহলে পুরো পেজের HTML সরিয়ে শুধুমাত্র warning message দেখানো হবে
+    if (!(record && record.site_access === 'true-access')) {
+      // পুরো HTML replace করে ফেলে যাতে অন্য কোন function বা event কাজ না করে
+      // document.documentElement.innerHTML = `
+      form.innerHTML = `
+        <head>
+          <title>Access Denied</title>
+        </head>
+        <body>
+          <div style="text-align:center; margin-top:50px; font-size:20px;">
+            Site access denied.
+          </div>
+        </body>
+      `;
+    }
+    // যদি access valid থাকে, তাহলে কিছুই পরিবর্তন করা হবে না
+  } catch (error) {
+    // কোনো error ঘটলে, পুরো HTML replace করে error message দেখানো হবে
+    // document.documentElement.innerHTML = `
+    form.innerHTML = `
+      <head>
+        <title>Error</title>
+      </head>
+      <body>
+        <div style="text-align:center; margin-top:50px; font-size:20px;">
+          Error verifying site access.
+        </div>
+      </body>
+    `;
+  }
+});
